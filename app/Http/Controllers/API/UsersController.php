@@ -25,15 +25,20 @@ class UsersController extends Controller {
             $success['id'] = $user->id;
             $success['name'] = $user->name;
 
-            // SAVE TOKEN
+            
             $user->remember_token = $success['token'];
             $user->save();
+
+            $logs = new Logs();
+
+            $logs->userid = $user->id;
+            $logs->log = "Login";
+            $logs['logdetails'] = "User $user->username has logged in into my system";
+            $logs['logtype'] = "API login";
+            $logs->save();
+
             return response()->json($success, $this->successStatus);
 
-            // log->id = $user->id
-            // log->log = "Login"
-            // log->logdetails = "User $user->username has logged in into my system"
-            // log->logtype = "API Login"
         } else {
             return response()->json(['response' => 'User not found'], 404);
         }
